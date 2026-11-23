@@ -1,0 +1,361 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yassine Dakhlaoui | Developer • Designer • Otaku</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Brush Display + Clean Sans + Japanese -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@500;700;900&family=Permanent+Marker&family=Sriracha&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#08080A',
+            akatsuki: '#E50914',
+            crimsonGlow: '#FF1E27',
+          },
+          fontFamily: {
+            brush: ['"Permanent Marker"', 'cursive'],
+            script: ['"Sriracha"', 'cursive'],
+            sans: ['"Inter"', 'sans-serif'],
+            jp: ['"Noto Sans JP"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --accent: #E50914;
+      --accent-bright: #FF1E27;
+      --accent-glow: rgba(229, 9, 20, 0.6);
+      --bg-base: #08080A;
+    }
+
+    body.sharingan-mode {
+      --accent: #FF1E27;
+      --accent-bright: #FF4D56;
+      --accent-glow: rgba(255, 30, 39, 0.85);
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg-base);
+      /* Uses bg.jpg when placed in the same folder, with a rich crimson radial gradient fallback */
+      background-image:
+        linear-gradient(90deg, rgba(8, 8, 10, 0.88) 0%, rgba(8, 8, 10, 0.52) 48%, rgba(8, 8, 10, 0.35) 100%),
+        linear-gradient(180deg, rgba(8, 8, 10, 0.45) 0%, rgba(8, 8, 10, 0.15) 45%, rgba(8, 8, 10, 0.92) 100%),
+        url('bg.jpg'),
+        radial-gradient(circle at 72% 28%, rgba(210, 14, 26, 0.42) 0%, rgba(55, 4, 9, 0.48) 42%, rgba(8, 8, 10, 0.98) 85%);
+      background-size: cover;
+      background-position: center top;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      color: #F5F5F7;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #08080A;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #52070B;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #E50914;
+    }
+
+    /* Glassmorphism & Glowing Red Borders */
+    .akatsuki-glass {
+      background: linear-gradient(145deg, rgba(16, 14, 18, 0.82), rgba(9, 9, 12, 0.92));
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(229, 9, 20, 0.38);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.72), inset 0 0 18px rgba(229, 9, 20, 0.08);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .akatsuki-glass:hover {
+      border-color: var(--accent-bright);
+      box-shadow: 0 12px 36px rgba(229, 9, 20, 0.32), inset 0 0 22px rgba(229, 9, 20, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .nav-pill-active {
+      background: linear-gradient(135deg, #FF1E27 0%, #B8040D 100%);
+      box-shadow: 0 0 22px var(--accent-glow), inset 0 1px 1px rgba(255, 255, 255, 0.35);
+      color: #FFFFFF !important;
+    }
+
+    .brush-shadow {
+      text-shadow: 0 6px 26px rgba(0, 0, 0, 0.96), 0 0 32px rgba(229, 9, 20, 0.32);
+    }
+
+    .crimson-text-glow {
+      text-shadow: 0 0 24px rgba(229, 9, 20, 0.82), 0 5px 14px rgba(0, 0, 0, 0.95);
+    }
+
+    .vertical-jp {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      letter-spacing: 0.25em;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-akatsuki selection:text-white">
+
+  <!-- Ambient Crimson Embers Canvas -->
+  <canvas id="emberCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+  <!-- Right Side Vertical Konoha Emblem + Japanese Katakana -->
+  <aside class="hidden xl:flex fixed right-5 top-1/2 -translate-y-1/2 z-30 flex-col items-center gap-4 select-none">
+    <div class="w-11 h-11 rounded-full bg-black/75 border border-akatsuki/60 flex items-center justify-center shadow-[0_0_16px_rgba(229,9,20,0.55)]">
+      <svg class="w-7 h-7 text-crimsonGlow" viewBox="0 0 64 64" fill="none">
+        <path d="M36 14C23 14 14 23 14 34C14 44 22 51 32 51C41 51 48 44 48 35C48 27 42 21 34 21C27 21 22 26 22 33C22 39 27 43 32 43C36 43 39 40 39 36C39 33 37 31 34 31" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>
+        <path d="M14 34L8 40M36 14L43 9L41 17" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="vertical-jp font-jp text-lg font-bold text-white/90 tracking-widest drop-shadow-[0_0_12px_rgba(229,9,20,0.85)]">
+      うずまきナルト
+    </span>
+    <div class="w-[2px] h-20 bg-gradient-to-b from-akatsuki via-akatsuki/40 to-transparent"></div>
+  </aside>
+
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="sticky top-0 z-40 px-4 sm:px-8 pt-4 pb-2">
+    <nav class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      <!-- Brand Logo: Akatsuki Cloud + Brush Name -->
+      <a href="#home" class="flex items-center gap-3 group">
+        <div class="relative w-12 h-9 flex items-center justify-center">
+          <svg class="w-12 h-9 drop-shadow-[0_0_10px_rgba(229,9,20,0.85)] group-hover:scale-105 transition-transform" viewBox="0 0 120 75" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M26 56C14 56 6 48 6 38C6 29 13 22 22 21C25 11 35 5 46 6C56 7 64 13 67 22C72 19 79 18 85 20C95 23 102 32 101 42C100 51 92 57 82 57H26Z" fill="#B80710" stroke="#FFFFFF" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M35 39C35 33 40 29 45 29C50 29 54 33 54 38C54 42 51 45 47 45C44 45 42 43 42 40" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+            <path d="M68 38C68 33 72 30 77 30C81 30 85 33 85 38C85 41 82 44 79 44" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="leading-none">
+          <span class="block font-brush text-white text-base sm:text-lg tracking-wider">YASSINE</span>
+          <span class="block font-brush text-crimsonGlow text-sm sm:text-base tracking-wider">DAKHLAOUI</span>
+        </div>
+      </a>
+
+      <!-- Center Floating Pill Navigation -->
+      <div class="hidden lg:flex items-center gap-1 bg-black/75 backdrop-blur-xl border border-akatsuki/35 px-2.5 py-1.5 rounded-full shadow-[0_6px_25px_rgba(0,0,0,0.85)]">
+        <a href="#home" class="nav-link nav-pill-active flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-200 transition-all">
+          <i class="fa-solid fa-house text-xs"></i>
+          <span>Home</span>
+        </a>
+        <a href="#about" class="nav-link flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+          <i class="fa-solid fa-user text-xs"></i>
+          <span>About</span>
+        </a>
+        <a href="#skills" class="nav-link flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+          <i class="fa-solid fa-code text-xs"></i>
+          <span>Skills</span>
+        </a>
+        <a href="#projects" class="nav-link flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+          <i class="fa-solid fa-layer-group text-xs"></i>
+          <span>Projects</span>
+        </a>
+        <a href="#journey" class="nav-link flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+          <i class="fa-solid fa-trophy text-xs"></i>
+          <span>My Journey</span>
+        </a>
+        <a href="#contact" class="nav-link flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-all">
+          <i class="fa-solid fa-envelope text-xs"></i>
+          <span>Contact</span>
+        </a>
+      </div>
+
+      <!-- Right Controls: Aura Toggle + Mobile Menu -->
+      <div class="flex items-center gap-2.5">
+        <button id="auraToggle" title="Toggle Crimson Sharingan Aura" class="w-11 h-11 rounded-full bg-black/80 border border-akatsuki/50 hover:border-crimsonGlow flex items-center justify-center text-white shadow-[0_0_18px_rgba(229,9,20,0.45)] transition-all">
+          <i id="auraIcon" class="fa-solid fa-moon text-base text-gray-100"></i>
+        </button>
+
+        <button id="mobileMenuBtn" aria-label="Toggle Menu" class="lg:hidden w-11 h-11 rounded-full bg-black/80 border border-akatsuki/50 flex items-center justify-center text-white">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Dropdown Navigation -->
+    <div id="mobileMenu" class="hidden lg:hidden mt-3 max-w-7xl mx-auto akatsuki-glass rounded-2xl p-3 flex flex-col gap-1.5">
+      <a href="#home" class="mobile-nav-link px-4 py-2.5 rounded-xl bg-akatsuki text-white font-medium flex items-center gap-3"><i class="fa-solid fa-house w-4"></i> Home</a>
+      <a href="#about" class="mobile-nav-link px-4 py-2.5 rounded-xl text-gray-200 hover:bg-white/5 font-medium flex items-center gap-3"><i class="fa-solid fa-user w-4"></i> About</a>
+      <a href="#skills" class="mobile-nav-link px-4 py-2.5 rounded-xl text-gray-200 hover:bg-white/5 font-medium flex items-center gap-3"><i class="fa-solid fa-code w-4"></i> Skills</a>
+      <a href="#projects" class="mobile-nav-link px-4 py-2.5 rounded-xl text-gray-200 hover:bg-white/5 font-medium flex items-center gap-3"><i class="fa-solid fa-layer-group w-4"></i> Projects (CALCORA)</a>
+      <a href="#journey" class="mobile-nav-link px-4 py-2.5 rounded-xl text-gray-200 hover:bg-white/5 font-medium flex items-center gap-3"><i class="fa-solid fa-trophy w-4"></i> My Journey</a>
+      <a href="#contact" class="mobile-nav-link px-4 py-2.5 rounded-xl text-gray-200 hover:bg-white/5 font-medium flex items-center gap-3"><i class="fa-solid fa-envelope w-4"></i> Contact</a>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-8">
+
+    <!-- 1. HERO SECTION (Left-aligned so Naruto & Akatsuki cloak in bg.jpg shine on the right) -->
+    <section id="home" class="pt-6 pb-8 lg:pt-12 lg:pb-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+        <!-- Left Hero Content -->
+        <div class="lg:col-span-7 space-y-5">
+          <div>
+            <p class="font-script italic text-2xl sm:text-3xl text-gray-100 mb-1 tracking-wide">
+              Hello, I'm
+            </p>
+            <h1 class="font-brush uppercase leading-[0.93] tracking-wide select-none">
+              <span class="block text-5xl sm:text-7xl xl:text-[5.25rem] text-white brush-shadow">
+                YASSINE
+              </span>
+              <span class="block text-5xl sm:text-7xl xl:text-[5.25rem] text-crimsonGlow crimson-text-glow mt-1">
+                DAKHLAOUI
+              </span>
+            </h1>
+          </div>
+
+          <!-- Role Tagline -->
+          <div class="flex flex-wrap items-center gap-3 text-base sm:text-xl font-semibold text-white tracking-wide">
+            <span>Developer</span>
+            <span class="text-crimsonGlow">•</span>
+            <span>Designer</span>
+            <span class="text-crimsonGlow">•</span>
+            <span>Otaku</span>
+          </div>
+
+          <!-- Naruto Quote -->
+          <blockquote class="border-l-2 border-crimsonGlow pl-4 py-1 max-w-xl">
+            <p class="italic text-gray-200 text-sm sm:text-base leading-relaxed">
+              “Never give up...<br>
+              because your dream is worth fighting for.”
+            </p>
+            <footer class="mt-1 text-right sm:text-left sm:pl-44 font-script text-crimsonGlow text-base">
+              — Naruto
+            </footer>
+          </blockquote>
+
+          <!-- 4 Glowing Contact Pill Cards -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2 max-w-2xl">
+            <!-- Phone Pill -->
+            <a href="tel:+21621764310" class="akatsuki-glass rounded-full px-4 py-2.5 flex items-center gap-3.5 group">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-400/60 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform shrink-0">
+                <i class="fa-solid fa-phone text-sm"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-white truncate">+216 21764310</p>
+                <p class="text-xs text-gray-400">Call Me</p>
+              </div>
+            </a>
+
+            <!-- Email Pill -->
+            <button onclick="copyEmailAndNotify()" class="akatsuki-glass rounded-full px-4 py-2.5 flex items-center gap-3.5 text-left group border-sky-500/50 hover:border-sky-400">
+              <div class="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-400/60 flex items-center justify-center text-sky-400 group-hover:scale-110 transition-transform shrink-0">
+                <i class="fa-solid fa-envelope text-sm"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs sm:text-sm font-semibold text-white truncate">yassinedakhlaouy1111@gmail.com</p>
+                <p class="text-xs text-sky-300">Send Email</p>
+              </div>
+            </button>
+
+            <!-- Facebook Pill -->
+            <a href="#contact" onclick="showToast('Facebook: Yassine Dakhlaoui')" class="akatsuki-glass rounded-full px-4 py-2.5 flex items-center gap-3.5 group">
+              <div class="w-10 h-10 rounded-full bg-blue-600/25 border border-blue-500/60 flex items-center justify-center text-blue-400 group-hover:scale-110 transition-transform shrink-0">
+                <i class="fa-brands fa-facebook-f text-sm"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-white truncate">Yassine Dakhlaoui</p>
+                <p class="text-xs text-gray-400">Follow Me</p>
+              </div>
+            </a>
+
+            <!-- Instagram Pill -->
+            <a href="#contact" onclick="showToast('Instagram: @yassyne_dakhlaouy')" class="akatsuki-glass rounded-full px-4 py-2.5 flex items-center gap-3.5 group">
+              <div class="w-10 h-10 rounded-full bg-pink-600/25 border border-pink-500/60 flex items-center justify-center text-pink-400 group-hover:scale-110 transition-transform shrink-0">
+                <i class="fa-brands fa-instagram text-base"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-white truncate">@yassyne_dakhlaouy</p>
+                <p class="text-xs text-gray-400">Follow Me</p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Column intentionally open so Naruto & Hokage cliff in bg.jpg remain clearly visible -->
+        <div class="hidden lg:block lg:col-span-5 min-h-[380px]"></div>
+      </div>
+
+      <!-- 2. TWO-COLUMN BOTTOM SHOWCASE CARDS (Matching 21376.png) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+
+        <!-- Left Card: My Journey -->
+        <div class="lg:col-span-7 akatsuki-glass rounded-2xl overflow-hidden flex flex-col sm:flex-row items-stretch">
+          <!-- Crimson Moon Shinobi Rooftop Thumbnail -->
+          <div class="sm:w-48 h-44 sm:h-auto relative bg-gradient-to-br from-[#3D0409] via-[#170609] to-[#08080A] flex items-center justify-center overflow-hidden shrink-0 border-b sm:border-b-0 sm:border-r border-akatsuki/35">
+            <div class="w-28 h-28 rounded-full bg-gradient-to-br from-[#FF3B44] to-[#8A040C] shadow-[0_0_30px_rgba(255,30,39,0.85)]"></div>
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 180" fill="none">
+              <path d="M0 155 Q95 125 200 150 L200 180 L0 180 Z" fill="#070709"/>
+              <path d="M20 148 Q95 122 180 144" stroke="#E50914" stroke-opacity="0.55" stroke-width="1.5"/>
+              <circle cx="98" cy="96" r="10" fill="#070709"/>
+              <path d="M84 112 Q98 102 114 114 L120 138 L78 138 Z" fill="#070709"/>
+              <path d="M90 92 L72 86 L76 96 Z" fill="#070709"/>
+            </svg>
+          </div>
+
+          <!-- Card Content -->
+          <div class="p-5 sm:p-6 flex flex-col justify-between flex-1">
+            <div>
+              <div class="flex items-center gap-2.5 mb-2">
+                <svg class="w-6 h-6 text-crimsonGlow shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 1L14.8 9.2L23 12L14.8 14.8L12 23L9.2 14.8L1 12L9.2 9.2L12 1ZM12 9.5A2.5 2.5 0 1 0 12 14.5A2.5 2.5 0 1 0 12 9.5Z"/>
+                </svg>
+                <h2 class="font-script text-2xl sm:text-3xl text-white">My Journey</h2>
+              </div>
+              <p class="text-sm text-gray-300 leading-relaxed">
+                From the first line of code to a passionate developer...
+                A journey of learning, challenges and big dreams.
+              </p>
+            </div>
+
+            <div class="mt-4 flex justify-end">
+              <button onclick="openJourneyModal()" class="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-black/85 hover:bg-akatsuki border border-crimsonGlow text-sm font-semibold text-white shadow-[0_0_16px_rgba(229,9,20,0.5)] transition-all group">
+                <span>Read More</span>
+                <i class="fa-solid fa-arrow-right text-crimsonGlow group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Card: My Skills -->
+        <div id="skills" class="lg:col-span-5 akatsuki-glass rounded-2xl p-5 sm:p-6 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-chart-line text-crimsonGlow text-xl"></i>
+              <h2 class="font-script text-2xl sm:text-3xl text-white">My Skills</h2>
+            </div>
+            <span class="text-xs text-gray-400">Select a skill</span>
+          </div>
+
+          <!-- 6 Crisp SVG Tech Badges: Python, C++, HTML5, CSS3, JavaScript, Linux -->
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2.5 text-center">
+            <!-- Python SVG -->
+            <button onclick="selectSkill('Python', '90%', 'Desktop GUI apps (CustomTkinter), automation & industrial tools like CALCORA.')" class="group flex flex-col items-center p-2 rounded-xl bg-white/[0.04] hover:bg-akatsuki/20 border border-transparent hover:border-akatsuki/60 transition-all">
+              <svg class="w-10 h-10 mb-1.5 group-hover:scale-110 transition-transform" viewBox="0 0 48 48" fill="none">
+                <path d="M23.8 5C15.5 5 16.1 8.6 16.1 8.6V12.4H24V13.6H12.9C12.9 13.6 7.5 13 7.5 21.4C7.5 29.8 12.2 29.5 12.2 29.5H15V25.5C15 25.5 14.8 20.8 19.6 20.8H27.6C27.6 20.8 32.1 20.9 32.1 16.5V9.3C32.1 9.3 32.8 5 23.8 5ZM19.4 7.6C20.2 7.6 20.9 8.3 20.9 9.1C20.9 9.9 20.2 10.6 19.4 10.6C18.6 10.6 17.9 9.9 17.9 9.1C17.9 8.3 18.6 7.6 19.4 7.6Z" fill="#387EB8"/>
+                <path d="M24.2 43C32.5 43 31.9 39.4 31.9 39.4V35.6H24V34.4H35.1C35.1 34.4 40.5 35 40.5 26.6C40.5 18.2 35.8 18.5 35.8 18.5H33V22.5C33 22.5 33.2 27.2 28.4 27.2H20.4C20.4 27.2 15.9 27.1 15.9 31.5V38.7C15.9 38.7 15.2 43 24.2 43ZM28.6 40.4C27.8 40.4 27.1 39.7 2
